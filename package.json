@@ -1,0 +1,36 @@
+{
+  "name": "cloupad-server",
+  "version": "1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "./node_modules/typescript/bin/tsc",
+    "start": "node build/index.js",
+    "build": "tsc",
+    "postinstall": "tsc",
+    "watch": "nodemon --watch . build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/cors": "^2.8",
+    "@types/express": "^4.17.15",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-jwt": "^8.4.0",
+    "flatted": "^3.2.7",
+    "helmet": "^4.4",
+    "jwks-rsa": "^3.0.0",
+    "morgan": "^1.9",
+    "neo4j-driver": "^5.6.0",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}
