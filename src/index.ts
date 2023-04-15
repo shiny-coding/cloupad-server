@@ -1,44 +1,29 @@
 import express from 'express';
 import bodyParser from "body-parser";
-import Account from "./model";
 import neo4j from 'neo4j-driver';
 
 import dotenv from 'dotenv';
-
-const cors = require('cors');
 
 const morgan = require("morgan");
 const helmet = require("helmet");
 const { expressjwt: jwt } = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
-import authConfig from "./AuthConfig.json";
 
 const app = express();
-const appOrigin = process.env.APP_ORIGIN;
 
 dotenv.config();
 
-if (
-	!authConfig.domain ||
-	!authConfig.audience ||
-	authConfig.audience === "YOUR_API_IDENTIFIER"
-) {
-	console.log(
-		"Exiting: Please make sure that auth_config.json is in place and populated with valid domain and audience values"
-	);
-
+if ( !process.env.AUTH0_DOMAIN || !process.env.AUTH0_AUDIENCE ) {
+	console.log( "Exiting: need process.env.AUTH0_DOMAIN and process.env.AUTH0_AUDIENCE set" );
 	process.exit();
 }
 
 app.use(morgan("dev"));
 app.use(helmet());
-// app.use(cors({ origin: appOrigin }));
 
 
 const router = express.Router();
 router.use( express.json() );
-
-// const neo4jPassword = '8cpG5m2QMqlGWIA3mUUyXrzZfwHB-xfIq8-s3KFG7Dw';
 
 const neo4jDriver = neo4j.driver(
 	process.env.NEO4J_CONNECTION_STRING ?? '',
@@ -61,11 +46,11 @@ const checkJwt = jwt({
 		cache: true,
 		rateLimit: true,
 		jwksRequestsPerMinute: 15,
-		jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`,
+		jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
 	} ),
 
-	audience: authConfig.audience,
-	issuer: `https://${authConfig.domain}/`,
+	audience: process.env.AUTH0_AUDIENCE,
+	issuer: `https://${process.env.AUTH0_DOMAIN}/`,
 	// scope: 'openid profile email read:appointments',
 	algorithms: [ "RS256" ],
 });
@@ -80,7 +65,6 @@ async function main() {
 
 	function getEmailFromRequest( request: any ) {
 		let userEmail = (request as any).auth.email;
-		//let { userEmail } = request.query as any;
 		return userEmail;
 	}
 
