@@ -115,6 +115,10 @@ async function main() {
 		} catch ( exception ) { next( exception ); } finally { session.close(); }
 	});
 
+	app.get( "/info", async ( request, response, next ) => {
+		response.json( { success : true } );
+	} );
+
 	app.get( "/deleteFile", checkJwt, async ( request, response, next ) => {
 		let userEmail = getEmailFromRequest( request );
 		let uid = + (request.query as any).uid;
